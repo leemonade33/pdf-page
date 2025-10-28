@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ouvrir le PDF</title>
+  <meta name="description" content="Lien pour ouvrir directement votre PDF depuis Instagram">
+
+  <style>
+    :root{--bg:#0b0b0c;--fg:#f5f5f5;--muted:#a3a3a3;--card:#131316;--accent:#5eead4}
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Apple Color Emoji,Segoe UI Emoji;background:radial-gradient(1200px 600px at 80% -10%,#1a1a1f 10%,#0b0b0c 50%),var(--bg);color:var(--fg);-webkit-font-smoothing:antialiased}
+    .wrap{min-height:100%;display:grid;place-items:center;padding:24px}
+    .card{width:100%;max-width:540px;background:linear-gradient(180deg,#18181b, #121216);border:1px solid #26262b;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.35);padding:24px}
+    .title{font-size:clamp(22px,3.2vw,30px);font-weight:700;letter-spacing:-.02em;margin:4px 0 8px}
+    .desc{color:var(--muted);font-size:15px;line-height:1.5;margin:0 0 18px}
+    .btns{display:grid;gap:12px;margin-top:8px}
+    .btn{appearance:none;border:0;border-radius:14px;padding:14px 18px;font-weight:700;font-size:16px;letter-spacing:.01em;cursor:pointer;transition:transform .05s ease, box-shadow .2s ease;display:flex;align-items:center;justify-content:center;text-decoration:none}
+    .btn:active{transform:translateY(1px)}
+    .btn-primary{background:var(--accent);color:#07201a;box-shadow:0 6px 20px rgba(94,234,212,.25)}
+    .btn-secondary{background:#1b1b20;color:#e6e6e6;border:1px solid #2a2a30}
+    .note{margin-top:14px;font-size:13px;color:var(--muted)}
+    .preview{margin-top:18px;border-radius:12px;overflow:hidden;border:1px solid #24242a;background:#0e0e11}
+    .preview object{width:100%;height:min(70vh,720px);display:block}
+    .hide{display:none}
+    .logo{display:inline-grid;place-items:center;width:40px;height:40px;border-radius:10px;background:#101014;border:1px solid #23232a}
+    .row{display:flex;align-items:center;gap:12px}
+    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-size:13px;color:#d0d0d0;background:#121217;border:1px solid #26262b;border-radius:10px;padding:8px 10px;overflow:auto}
+    .small{font-size:12px;color:#8e8e96}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <main class="card" id="app" data-pdf="jiwonlee.pdf">
+      <div class="row">
+        <div class="logo">📄</div>
+        <div>
+          <h1 class="title">Ouvrir le PDF</h1>
+          <p class="desc">Appuyez sur le bouton ci-dessous pour ouvrir votre PDF dans un nouvel onglet ou voir un aperçu.</p>
+        </div>
+      </div>
+
+      <div class="btns">
+        <a id="openBtn" class="btn btn-primary" target="_blank" rel="noopener">Ouvrir dans un nouvel onglet</a>
+        <a id="downloadBtn" class="btn btn-secondary" download>Télécharger le PDF</a>
+      </div>
+
+      <p class="note small">Sur certains navigateurs mobiles ou dans l'app Instagram, l'aperçu peut être limité. Utilisez le bouton "Ouvrir dans un nouvel onglet" si nécessaire.</p>
+
+      <div id="preview" class="preview">
+        <object id="pdfObject" type="application/pdf">
+          <div style="padding:16px">
+            <p class="small">Votre navigateur ne supporte pas l'aperçu du PDF. Utilisez le lien ci-dessous.</p>
+            <p><a id="fallbackLink" class="btn btn-primary" target="_blank" rel="noopener">Ouvrir le PDF</a></p>
+          </div>
+        </object>
+      </div>
+
+      <details style="margin-top:16px">
+        <summary class="small">Comment configurer</summary>
+        <div style="margin-top:10px">
+          <ol class="small">
+            <li>Mettez ce fichier et <span class="mono">portfolio.pdf</span> dans le même dossier.</li>
+            <li>Assurez-vous que le chemin correspond:<br>
+              <code class="mono">&lt;main data-pdf="<strong>portfolio.pdf</stroyour-file.pdfng>"&gt;</code>
+            </li>
+            <li>Hébergez le dossier sur GitHub Pages, Netlify, Vercel ou autre service d'hébergement statique, puis utilisez l'URL dans votre bio Instagram.</li>
+          </ol>
+        </div>
+      </details>
+
+    </main>
+  </div>
+
+  <script>
+    (function(){
+      const root = document.getElementById('app');
+      const pdfPath = root?.dataset?.pdf || 'portfolio.pdf';
+
+      const openBtn = document.getElementById('openBtn');
+      const downloadBtn = document.getElementById('downloadBtn');
+      const fallbackLink = document.getElementById('fallbackLink');
+      [openBtn, downloadBtn, fallbackLink].forEach(el=>{ if(el){ el.href = pdfPath; }});
+
+      const fileName = pdfPath.split('/').pop() || 'file.pdf';
+      if(downloadBtn) downloadBtn.setAttribute('download', fileName);
+
+      const pdfObject = document.getElementById('pdfObject');
+      if(pdfObject) pdfObject.setAttribute('data', pdfPath + '#toolbar=1&navpanes=0&scrollbar=1');
+
+      document.addEventListener('click', function(e){
+        const ig = navigator.userAgent.toLowerCase().includes('instagram');
+        if(ig && e.target === openBtn){
+          openBtn.removeAttribute('target');
+        }
+      }, { once: true });
+    })();
+  </script>
+</body>
+</html>
